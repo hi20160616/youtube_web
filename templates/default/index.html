@@ -1,0 +1,9 @@
+{{template "header" .}}
+<h1 class="mt-3 md-3">{{.Title}}</h1>
+
+<p>[<a href="/edit/{{.Title}}">edit</a>]</p>
+
+<div>
+	{{printf "%s" .Body}}
+</div>
+{{template "footer" .}}
