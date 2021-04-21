@@ -15,7 +15,6 @@ const (
 type Page struct {
 	Title string
 	Data  interface{}
-	Funcs template.FuncMap
 }
 
 var templates = template.New("")

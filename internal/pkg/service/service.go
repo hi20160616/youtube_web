@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
 	"github.com/hi20160616/youtube_web/internal/pkg/handler"
 )
 
@@ -14,13 +13,9 @@ type Server struct {
 }
 
 func NewServer(address string) (*Server, error) {
-	h, err := handler.NewHandler(db.YoutubeService)
-	if err != nil {
-		return nil, err
-	}
 	return &Server{http.Server{
 		Addr:    address,
-		Handler: h.GetHandler(),
+		Handler: handler.GetHandler(),
 	}}, nil
 }
 
