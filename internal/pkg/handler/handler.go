@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"regexp"
@@ -45,6 +46,7 @@ func (h *Handler) GetHandler() *http.ServeMux {
 		// fmt.Fprintf(w, "Welcome to the home page!")
 	})
 	mux.HandleFunc("/channels/", h.makeHandler(h.channelsHandler))
+	mux.HandleFunc("/cid/", h.makeHandler(h.cidHandler))
 	return mux
 }
 
@@ -65,9 +67,33 @@ func (h *Handler) channelsHandler(w http.ResponseWriter, r *http.Request, p *ren
 }
 
 func (h *Handler) cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	p.Title = "Channel ?"
 	// 1. GetVideos by channelIds
+	cid := r.URL.Path[len("/cid/"):]
+	vr := data.NewVideoRepo().SetChannelId(cid)
+	res, err := &youtube.ActivityListResponse{}, errors.New("")
+	res, err = vr.GetVideos()
+	if err != nil {
+		log.Printf("handler: cidHandler: %v", err)
+	}
+	if res.NextPageToken == "" {
+		p.Data = "no videos"
+	} else {
+		p.Data = res
+	}
 	// 2. Get channels title
+	if p.Title == "" {
+		if len(res.Items) > 0 {
+			p.Title = res.Items[0].Snippet.ChannelTitle
+		} else {
+			p.Title = "No Title"
+		}
+	}
+	// p.Funcs = template.FuncMap{
+	//         "summary":   render.Summary,
+	//         "smartTime": render.SmartTime,
+	// }
+	// 3. render
+	render.Derive(w, "cid", p)
 }
 
 func (h *Handler) vidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
