@@ -67,7 +67,7 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Printf("handler: cidHandler: %v", err)
 	}
 	if res.NextPageToken == "" {
-		p.Data = "no videos"
+		p.Data = nil
 	} else {
 		p.Data = res
 	}

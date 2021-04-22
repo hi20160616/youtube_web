@@ -37,9 +37,9 @@ func (v *Videos) GetVideos() (*youtube.ActivityListResponse, error) {
 	if v.MaxResults >= 50 {
 		v.MaxResults = 50
 	}
-	if v.PublishAfter == "" {
-		v.PublishAfter = timeParsed(-1 * 60 * 24) // 1 day ago
-	}
+	// if v.PublishAfter == "" {
+	//         v.PublishAfter = timeParsed(-1 * 60 * 24) // 1 day ago
+	// }
 	if v.PublishBefore == "" {
 		v.PublishBefore = timeParsed(0)
 	}
@@ -48,8 +48,10 @@ func (v *Videos) GetVideos() (*youtube.ActivityListResponse, error) {
 	call := YoutubeService.Activities.List(strings.Split(v.Part, ","))
 	call = call.ChannelId(v.ChannelId)
 	call = call.MaxResults(v.MaxResults)
-	call = call.PublishedAfter(v.PublishAfter)
 	call = call.PublishedBefore(v.PublishBefore)
+	if v.PublishAfter != "" {
+		call = call.PublishedAfter(v.PublishAfter)
+	}
 	if v.NextPageToken != "" {
 		call = call.PageToken(v.NextPageToken)
 	}

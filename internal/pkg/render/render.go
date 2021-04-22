@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	tmplPath = "templates/default"
+	tmplPath = "templates/default" // for run
+	// tmplPath = "../../../templates/default" // for test
 )
 
 type Page struct {
