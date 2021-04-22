@@ -22,8 +22,9 @@ var templates = template.New("")
 
 func init() {
 	templates.Funcs(template.FuncMap{
-		"summary":   Summary,
-		"smartTime": SmartTime,
+		"summary":       Summary,
+		"smartTime":     SmartTime,
+		"smartDuration": SmartDuration,
 	})
 	pattern := filepath.Join(tmplPath, "*.html")
 	templates = template.Must(templates.ParseGlob(pattern))
@@ -50,4 +51,14 @@ func SmartTime(t string) string {
 		log.Printf("render: SmartTime: %v", err)
 	}
 	return tt.Format("[01.02][1504H]")
+}
+
+// https://play.golang.org/p/BbNjulPhw3m
+func SmartDuration(t string) string {
+	return t[2:]
+	// t = strings.ToLower(t[2:])
+	// tt, _ := time.ParseDuration(t)
+	// ttt := tt.Truncate(time.Second).String()
+	// r := strings.NewReplacer("h", ":", "m", ":", "s", "")
+	// return r.Replace(ttt)
 }

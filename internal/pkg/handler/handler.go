@@ -1,14 +1,12 @@
 package handler
 
 import (
-	"errors"
 	"log"
 	"net/http"
 	"regexp"
 
 	"github.com/hi20160616/youtube_web/internal/data"
 	"github.com/hi20160616/youtube_web/internal/pkg/render"
-	"google.golang.org/api/youtube/v3"
 )
 
 var validPath = regexp.MustCompile("^/(cid|vid|index|channels)/(.*?)$")
@@ -60,13 +58,13 @@ func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// 1. GetVideos by channelIds
 	cid := r.URL.Path[len("/cid/"):]
-	vr := data.NewVideoRepo().SetChannelId(cid)
-	res, err := &youtube.ActivityListResponse{}, errors.New("")
-	res, err = vr.GetVideos()
+	vr := data.NewVideosRepo().WithChannelId(cid)
+	// res, err := &youtube.VideoListResponse{}, errors.New("")
+	res, err := vr.GetVideos()
 	if err != nil {
 		log.Printf("handler: cidHandler: %v", err)
 	}
-	if res.NextPageToken == "" {
+	if vr.Activities.NextPageToken == "" {
 		p.Data = nil
 	} else {
 		p.Data = res
