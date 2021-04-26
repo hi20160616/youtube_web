@@ -1,6 +1,8 @@
 package render
 
 import (
+	"fmt"
+	"github.com/rickb777/date/period"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -50,12 +52,17 @@ func SmartTime(t string) string {
 	if err != nil {
 		log.Printf("render: SmartTime: %v", err)
 	}
-	return tt.Format("[01.02][1504H]")
+	return tt.Format("15:04/01.02")
 }
 
-// https://play.golang.org/p/BbNjulPhw3m
+// https://play.golang.org/p/nMApT7G8SRV
 func SmartDuration(t string) string {
-	return t[2:]
+	p, err := period.Parse(t)
+	if err != nil {
+		log.Printf("pkg: render: error: %v", err)
+		return t
+	}
+	return fmt.Sprintf("%02d:%02d:%02d", p.Hours(), p.Minutes(), p.Seconds())
 	// t = strings.ToLower(t[2:])
 	// tt, _ := time.ParseDuration(t)
 	// ttt := tt.Truncate(time.Second).String()
