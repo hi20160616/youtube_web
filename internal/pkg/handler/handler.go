@@ -36,6 +36,7 @@ func GetHandler() *http.ServeMux {
 	})
 	mux.HandleFunc("/channels/", makeHandler(channelsHandler))
 	mux.HandleFunc("/cid/", makeHandler(cidHandler))
+	mux.HandleFunc("/vid/", makeHandler(vidHandler))
 	return mux
 }
 
@@ -60,7 +61,7 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	cid := r.URL.Path[len("/cid/"):]
 	vr := data.NewVideosRepo().WithChannelId(cid)
 	// res, err := &youtube.VideoListResponse{}, errors.New("")
-	res, err := vr.GetVideos()
+	res, err := vr.GetActivitiesVideos()
 	if err != nil {
 		log.Printf("handler: cidHandler: %v", err)
 	}
@@ -84,5 +85,16 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 func vidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "Video Title ?"
 	// 1. GetVideo from api
+	vid := r.URL.Path[len("/vid/"):]
+	vr := data.NewVideosRepo().WithVideoId(vid)
+	res, err := vr.GetVideos()
+	if err != nil {
+		log.Printf("handler: vidHandler: %v", err)
+	}
+	if len(res.Items) > 0 {
+		p.Title = res.Items[0].Snippet.Title
+		p.Data = res.Items[0]
+	}
 	// 2. render it
+	render.Derive(w, "vid", p)
 }
