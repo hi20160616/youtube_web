@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	cidsPath     string = "./internal/pkg/db/json/cids.txt"
+	cidsPath string = "../../internal/pkg/db/json/cids.txt" // for test
+	// cidsPath     string = "./internal/pkg/db/json/cids.txt" // for run
 	channelsPath string = "./internal/pkg/db/json/channels.json"
 )
 

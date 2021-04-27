@@ -11,6 +11,21 @@ import (
 
 var validPath = regexp.MustCompile("^/(cid|vid|index|channels)/(.*?)$")
 
+type Handler struct {
+	ChannelRepo *data.ChannelsRepo
+	VideoRepo   *data.VideosRepo
+}
+
+var H = &Handler{&data.ChannelsRepo{}, &data.VideosRepo{}}
+
+func init() {
+	h, err := H.ChannelRepo.ReadChannels()
+	if err != nil {
+		log.Println(err)
+	}
+	H.ChannelRepo = h
+}
+
 func makeHandler(fn func(http.ResponseWriter, *http.Request, *render.Page)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
@@ -48,11 +63,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "Channels"
-	cs, err := data.ReadChannels()
-	if err != nil {
-		log.Printf("handler: channelsHandler: %v", err)
-	}
-	p.Data = cs
+	p.Data = H.ChannelRepo.Channels
 	render.Derive(w, "channels", p)
 }
 

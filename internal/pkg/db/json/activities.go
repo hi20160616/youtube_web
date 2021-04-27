@@ -21,7 +21,9 @@ type ActivitiesParams struct {
 	Fields        string
 }
 
-func timeParsed(minutes int) string {
+var ErrAcitvityListNil error = errors.New("ActivityListResponse is nil")
+
+func TimeParsed(minutes int) string {
 	return time.Now().Add(time.Duration(minutes) * time.Minute).Format(time.RFC3339)
 }
 
@@ -41,7 +43,7 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 		ap.MaxResults = 50
 	}
 	if ap.PublishBefore == "" {
-		ap.PublishBefore = timeParsed(0)
+		ap.PublishBefore = TimeParsed(0)
 	}
 
 	// load
@@ -62,16 +64,20 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 	if err != nil {
 		return nil, errors.WithMessage(err, "db: activities: List")
 	}
-	if len(res.Items) > 0 {
-		ap.ChannelTitle = res.Items[0].Snippet.Title
+	if len(res.Items) == 0 {
+		return nil, ErrAcitvityListNil
 	}
+	ap.ChannelTitle = res.Items[0].Snippet.Title
 	ap.NextPageToken = res.NextPageToken
 	return res, err
 }
 
 // minutes should be a number, such as (-1 * 60 * 24) means 1 day ago from now on
 func (ap *ActivitiesParams) WithPublishAfter(minutes int) *ActivitiesParams {
-	ap.PublishAfter = timeParsed(minutes)
+	if minutes == 0 {
+		return ap
+	}
+	ap.PublishAfter = TimeParsed(minutes)
 	return ap
 }
 

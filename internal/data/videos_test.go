@@ -13,11 +13,13 @@ func TestGetVideos(t *testing.T) {
 	res, err := &youtube.VideoListResponse{}, errors.New("")
 
 	vr := NewVideosRepo().
-		WithChannelId("UC_gUM8rL-Lrg6O3adPW9K1g").
+		WithChannelId("UC5da4UST5wrBydwPoYx18bg").
+		// WithPublishAfter4Activities(-1 * 24 * 60).
+		// WithChannelId("UC_gUM8rL-Lrg6O3adPW9K1g").
 		WithMaxResults(10)
 	i := 0
 	for {
-		res, err = vr.GetVideos()
+		res, err = vr.GetActivitiesVideos()
 		if err != nil {
 			t.Error(err)
 		}
