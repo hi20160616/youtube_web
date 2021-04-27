@@ -1,6 +1,9 @@
 package json
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
@@ -22,6 +25,9 @@ type ActivitiesParams struct {
 }
 
 var ErrAcitvityListNil error = errors.New("ActivityListResponse is nil")
+
+// var activitiesPath = "activities.json" // for test
+var activitiesPath = "./internal/pkg/db/json/activities.json"
 
 func TimeParsed(minutes int) string {
 	return time.Now().Add(time.Duration(minutes) * time.Minute).Format(time.RFC3339)
@@ -72,6 +78,11 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 	return res, err
 }
 
+func (ap *ActivitiesParams) WithChannelId(cid string) *ActivitiesParams {
+	ap.ChannelId = cid
+	return ap
+}
+
 // minutes should be a number, such as (-1 * 60 * 24) means 1 day ago from now on
 func (ap *ActivitiesParams) WithPublishAfter(minutes int) *ActivitiesParams {
 	if minutes == 0 {
@@ -86,8 +97,74 @@ func (ap *ActivitiesParams) WithMaxResults(max int64) *ActivitiesParams {
 	return ap
 }
 
-// fields can be `contentDetails.upload.videoId` to fetch out videoId only
-// func (ap *ActivitiesParams) WithFields(fields string) *ActivitiesParams {
-//         ap.Fields = fields
-//         return ap
-// }
+// getAllChannelActivities return VideoListResponse after 1 day ago
+func getAllChannelActivities() ([]*youtube.VideoListResponse, error) {
+	cs, err := ReadChannels()
+	rt := []*youtube.VideoListResponse{}
+	if err != nil {
+		return nil, err
+	}
+	for _, c := range cs {
+		vids := []string{}
+		ap := &ActivitiesParams{ChannelId: c.ChannelId}
+		activities, err := ap.WithPublishAfter(-1 * 24 * 60).List()
+		if err != nil {
+			if errors.Is(err, ErrAcitvityListNil) {
+				continue
+			}
+			return nil, err
+		}
+		for _, vs := range activities.Items {
+			if vs.ContentDetails.Upload != nil {
+				vids = append(vids, vs.ContentDetails.Upload.VideoId)
+			}
+		}
+		vp := &VideosParams{Id: strings.Join(vids, ",")}
+		vls, err := vp.List()
+		if err != nil {
+			return nil, err
+		}
+		rt = append(rt, vls)
+
+	}
+	return rt, nil
+}
+
+func storageActivities(as []*youtube.VideoListResponse) error {
+	asJson, err := json.Marshal(as)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(activitiesPath, asJson, 0644)
+}
+
+func ReadActivities() ([]*youtube.VideoListResponse, error) {
+	return readActivities()
+}
+
+func readActivities() ([]*youtube.VideoListResponse, error) {
+	as := []*youtube.VideoListResponse{}
+	b, err := os.ReadFile(activitiesPath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return UpdateActivities()
+		} else {
+			return nil, err
+		}
+	}
+	if err = json.Unmarshal(b, &as); err != nil {
+		return nil, err
+	}
+	return as, nil
+}
+
+func UpdateActivities() ([]*youtube.VideoListResponse, error) {
+	as, err := getAllChannelActivities()
+	if err != nil {
+		return nil, err
+	}
+	if err = storageActivities(as); err != nil {
+		return nil, err
+	}
+	return as, nil
+}

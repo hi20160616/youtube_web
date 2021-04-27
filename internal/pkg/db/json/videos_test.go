@@ -10,8 +10,8 @@ func TestVideosList(t *testing.T) {
 		id   string
 		want string
 	}{"Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI", ""}
-	vp := &VideosParams{}
-	vs, err := vp.List(tc.id)
+	vp := &VideosParams{Id: tc.id}
+	vs, err := vp.List()
 	if err != nil {
 		t.Error(err)
 	}

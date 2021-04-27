@@ -6,24 +6,31 @@ import (
 	"regexp"
 
 	"github.com/hi20160616/youtube_web/internal/data"
+	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
 	"github.com/hi20160616/youtube_web/internal/pkg/render"
+	"google.golang.org/api/youtube/v3"
 )
 
 var validPath = regexp.MustCompile("^/(cid|vid|index|channels)/(.*?)$")
 
 type Handler struct {
-	ChannelRepo *data.ChannelsRepo
-	VideoRepo   *data.VideosRepo
+	Channels   []*db.Channel
+	Activities []*youtube.VideoListResponse
 }
 
-var H = &Handler{&data.ChannelsRepo{}, &data.VideosRepo{}}
+var H = &Handler{nil, nil}
 
 func init() {
-	h, err := H.ChannelRepo.ReadChannels()
+	h, err := data.ReadChannels()
 	if err != nil {
 		log.Println(err)
 	}
-	H.ChannelRepo = h
+	v, err := data.ReadActivities()
+	if err != nil {
+		log.Println(err)
+	}
+	H.Channels = h
+	H.Activities = v
 }
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, *render.Page)) http.HandlerFunc {
@@ -57,13 +64,16 @@ func GetHandler() *http.ServeMux {
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// 1. get channels' ids that the VideoCount changed.
-	// 2. get videos just uploaded
+	// 2. get activities videos by channelIds
+	p := &render.Page{Title: "Home", Data: H.Activities}
+
 	// 3. render these videos
+	render.Derive(w, "index", p)
 }
 
 func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "Channels"
-	p.Data = H.ChannelRepo.Channels
+	p.Data = H.Channels
 	render.Derive(w, "channels", p)
 }
 
@@ -72,7 +82,7 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	cid := r.URL.Path[len("/cid/"):]
 	vr := data.NewVideosRepo().WithChannelId(cid)
 	// res, err := &youtube.VideoListResponse{}, errors.New("")
-	res, err := vr.GetActivitiesVideos()
+	res, err := vr.List()
 	if err != nil {
 		log.Printf("handler: cidHandler: %v", err)
 	}

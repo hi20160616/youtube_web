@@ -43,3 +43,15 @@ func TestActivitesList(t *testing.T) {
 		}
 	}
 }
+
+func TestGetAllChannelActivities(t *testing.T) {
+	vl, err := getAllChannelActivities()
+	if err != nil {
+		t.Error(err)
+	}
+	for _, vs := range vl {
+		for _, v := range vs.Items {
+			fmt.Println(v.Snippet.Title)
+		}
+	}
+}

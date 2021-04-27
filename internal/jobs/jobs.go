@@ -9,3 +9,7 @@ import (
 func UpdateChannels(s *youtube.Service) ([]*db.Channel, error) {
 	return db.UpdateChannels()
 }
+
+func UpdateActivities() ([]*youtube.VideoListResponse, error) {
+	return db.UpdateActivities()
+}

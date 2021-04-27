@@ -12,9 +12,12 @@ import (
 )
 
 var (
-	cidsPath string = "../../internal/pkg/db/json/cids.txt" // for test
-	// cidsPath     string = "./internal/pkg/db/json/cids.txt" // for run
-	channelsPath string = "./internal/pkg/db/json/channels.json"
+	// cidsPath     string = "cids.txt"      // for test
+	// channelsPath string = "channels.json" // for test
+	// cidsPath     string = "../../internal/pkg/db/json/cids.txt"      // for test
+	// channelsPath string = "../../internal/pkg/db/json/channels.json" // for test
+	cidsPath     string = "./internal/pkg/db/json/cids.txt"      // for run
+	channelsPath string = "./internal/pkg/db/json/channels.json" // for run
 )
 
 type Channel struct {
@@ -115,8 +118,5 @@ func storageChannels(cs []*Channel) error {
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(channelsPath, csJson, 0644); err != nil {
-		return nil
-	}
-	return nil
+	return ioutil.WriteFile(channelsPath, csJson, 0644)
 }

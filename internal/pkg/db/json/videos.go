@@ -12,15 +12,15 @@ type VideosParams struct {
 	Id   string
 }
 
-func (vp *VideosParams) List(id string) (*youtube.VideoListResponse, error) {
+func (vp *VideosParams) List() (*youtube.VideoListResponse, error) {
 	if vp.Part == "" {
 		vp.Part = "snippet, contentDetails"
 	}
-	if vp.Id = id; id == "" {
+	if vp.Id == "" {
 		return nil, errors.New("db: json: id is nil")
 	}
 
 	call := YoutubeService.Videos.List(strings.Split(vp.Part, ","))
-	call = call.Id(strings.Split(id, ",")...)
+	call = call.Id(strings.Split(vp.Id, ",")...)
 	return call.Do()
 }

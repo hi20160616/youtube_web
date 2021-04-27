@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
+	"github.com/pkg/errors"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -31,7 +32,7 @@ func (vr *VideosRepo) WithPublishAfter4Activities(minutes int) *VideosRepo {
 	return vr
 }
 
-func (vr *VideosRepo) GetActivitiesVideos() (*youtube.VideoListResponse, error) {
+func (vr *VideosRepo) List() (*youtube.VideoListResponse, error) {
 	vids := []string{}
 	a_vs, err := vr.Activities.List()
 	if err != nil {
@@ -42,12 +43,16 @@ func (vr *VideosRepo) GetActivitiesVideos() (*youtube.VideoListResponse, error) 
 			vids = append(vids, v.ContentDetails.Upload.VideoId)
 		}
 	}
-	return vr.Videos.List(strings.Join(vids, ","))
+	vr.Videos.Id = strings.Join(vids, ",")
+	return vr.Videos.List()
 }
 
 // GetVideos return all videos by id
 func (vr *VideosRepo) GetVideos() (*youtube.VideoListResponse, error) {
-	return vr.Videos.List(vr.Videos.Id)
+	if vr.Videos.Id == "" {
+		return nil, errors.New("data: GetVideos by nil id")
+	}
+	return vr.Videos.List()
 }
 
 // WithVideoId only used for GetVideos()

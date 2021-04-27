@@ -19,7 +19,7 @@ func TestGetVideos(t *testing.T) {
 		WithMaxResults(10)
 	i := 0
 	for {
-		res, err = vr.GetActivitiesVideos()
+		res, err = vr.List()
 		if err != nil {
 			t.Error(err)
 		}

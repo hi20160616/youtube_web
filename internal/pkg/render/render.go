@@ -12,7 +12,7 @@ import (
 
 const (
 	tmplPath = "templates/default" // for run
-	// tmplPath = "../../../templates/default" // for testindex x 1
+	// tmplPath = "../../../templates/default" // for test
 )
 
 type Page struct {
@@ -63,9 +63,4 @@ func SmartDuration(t string) string {
 		return t
 	}
 	return fmt.Sprintf("%02d:%02d:%02d", p.Hours(), p.Minutes(), p.Seconds())
-	// t = strings.ToLower(t[2:])
-	// tt, _ := time.ParseDuration(t)
-	// ttt := tt.Truncate(time.Second).String()
-	// r := strings.NewReplacer("h", ":", "m", ":", "s", "")
-	// return r.Replace(ttt)
 }
