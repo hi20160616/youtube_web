@@ -15,7 +15,8 @@ lsof -i:8080
 
 # TODO
 
-[ ] Optimize view of index
-[ ] Start jobs with heartbeat
-[ ] Load by Ajax on channels page.
+- [ ] Start jobs with heartbeat
+- [ ] Load by Ajax on channels page.
+- [X] Optimize view of index
+   - [ ] Scrollspy index
 
