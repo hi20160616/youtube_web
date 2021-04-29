@@ -80,7 +80,7 @@ func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// 1. GetVideos by channelIds
 	cid := r.URL.Path[len("/cid/"):]
-	vr := data.NewVideosRepo().WithChannelId(cid)
+	vr := data.NewVideosRepo().WithChannelId(cid).WithMaxResults(24)
 	// res, err := &youtube.VideoListResponse{}, errors.New("")
 	res, err := vr.List()
 	if err != nil {

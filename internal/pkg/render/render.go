@@ -36,6 +36,7 @@ func Derive(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("err template file: %s.html", tmpl)
 	}
 }
 

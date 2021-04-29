@@ -19,16 +19,16 @@ const (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	g, ctx := errgroup.WithContext(ctx)
+
+	// Web service
 	s, err := service.NewServer(address)
 	if err != nil {
 		log.Println(err)
 	}
-
 	g.Go(func() error {
 		defer cancel()
 		return s.Start(ctx)
 	})
-
 	g.Go(func() error {
 		sigs := make(chan os.Signal, 1)
 		signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
@@ -43,6 +43,29 @@ func main() {
 			defer cancel()
 			defer close(sigs)
 			return s.Stop(ctx)
+		}
+	})
+
+	// Update service
+	jobs := &service.JobService{}
+	g.Go(func() error {
+		defer cancel()
+		return jobs.Start(ctx)
+	})
+	g.Go(func() error {
+		sigs := make(chan os.Signal, 1)
+		signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
+		select {
+		case sig := <-sigs:
+			fmt.Println()
+			log.Printf("signal caught: %s, ready to quit...", sig.String())
+			defer cancel()
+			defer close(sigs)
+			return jobs.Stop(ctx)
+		case <-ctx.Done():
+			defer cancel()
+			defer close(sigs)
+			return jobs.Stop(ctx)
 		}
 	})
 
