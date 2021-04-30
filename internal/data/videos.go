@@ -27,6 +27,11 @@ func (vr *VideosRepo) WithMaxResults(max int64) *VideosRepo {
 	return vr
 }
 
+func (vr *VideosRepo) WithNextToken(token string) *VideosRepo {
+	vr.Activities.NextPageToken = token
+	return vr
+}
+
 func (vr *VideosRepo) WithPublishAfter4Activities(minutes int) *VideosRepo {
 	vr.Activities = vr.Activities.WithPublishAfter(minutes)
 	return vr

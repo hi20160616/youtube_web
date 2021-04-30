@@ -56,6 +56,7 @@ func GetHandler() *http.ServeMux {
 		homeHandler(w, req)
 		// fmt.Fprintf(w, "Welcome to the home page!")
 	})
+	mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.Dir("templates/default"))))
 	mux.HandleFunc("/channels/", makeHandler(channelsHandler))
 	mux.HandleFunc("/cid/", makeHandler(cidHandler))
 	mux.HandleFunc("/vid/", makeHandler(vidHandler))
@@ -80,7 +81,7 @@ func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// 1. GetVideos by channelIds
 	cid := r.URL.Path[len("/cid/"):]
-	vr := data.NewVideosRepo().WithChannelId(cid).WithMaxResults(24)
+	vr := data.NewVideosRepo().WithChannelId(cid).WithMaxResults(16)
 	// res, err := &youtube.VideoListResponse{}, errors.New("")
 	res, err := vr.List()
 	if err != nil {
