@@ -34,10 +34,12 @@ func UpdateByHoursStart(ctx context.Context) error {
 			if _, err := UpdateChannels(); err != nil {
 				return err
 			}
+			log.Println("Done.")
 			log.Println("Update Activities ...")
 			if _, err := UpdateActivities(); err != nil {
 				return err
 			}
+			log.Println("Done.")
 		}
 		return nil
 	}

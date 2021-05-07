@@ -13,7 +13,8 @@ func TestGetVideos(t *testing.T) {
 	res, err := &youtube.VideoListResponse{}, errors.New("")
 
 	vr := NewVideosRepo().
-		WithChannelId("UC5da4UST5wrBydwPoYx18bg").
+		WithChannelId("UC_gUM8rL-Lrg6O3adPW9K1g").
+		WithPageToken("CBAQAA").
 		// WithPublishAfter4Activities(-1 * 24 * 60).
 		// WithChannelId("UC_gUM8rL-Lrg6O3adPW9K1g").
 		WithMaxResults(10)

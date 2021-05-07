@@ -8,12 +8,16 @@ import (
 )
 
 func TestCidHandler(t *testing.T) {
-	req, err := http.NewRequest("get", "/cid/UC-5VbWqa7FfpDaK2lLwE3dg", nil)
+	// req, err := http.NewRequest("get", "/cidNext/?cid=UC_gUM8rL-Lrg6O3adPW9K1g&", nil)
+	req, err := http.NewRequest("get", "/cidNext/?cid=UC_gUM8rL-Lrg6O3adPW9K1g&p=CCAQAA", nil)
+	// req, err := http.NewRequest("get", "/cidNext/?cid=UC_gUM8rL-Lrg6O3adPW9K1g&p=CBAQAA", nil)
+	// req, err := http.NewRequest("get", "/cid/UC_gUM8rL-Lrg6O3adPW9K1g", nil)
 	if err != nil {
 		t.Error(err)
 	}
 	w := httptest.NewRecorder()
-	h := http.HandlerFunc(makeHandler(cidHandler))
+	h := http.HandlerFunc(makeHandler(cidNextHandler))
+	// h := http.HandlerFunc(makeHandler(cidHandler))
 	h.ServeHTTP(w, req)
 
 	if status := w.Code; status != http.StatusOK {

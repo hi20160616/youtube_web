@@ -27,8 +27,8 @@ func (vr *VideosRepo) WithMaxResults(max int64) *VideosRepo {
 	return vr
 }
 
-func (vr *VideosRepo) WithNextToken(token string) *VideosRepo {
-	vr.Activities.NextPageToken = token
+func (vr *VideosRepo) WithPageToken(token string) *VideosRepo {
+	vr.Activities.PageToken = token
 	return vr
 }
 

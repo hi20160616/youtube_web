@@ -18,7 +18,7 @@ func TestActivitesList(t *testing.T) {
 	}
 
 	for _, tc := range tcs {
-		ap := &ActivitiesParams{ChannelId: tc.cid}
+		ap := &ActivitiesParams{ChannelId: tc.cid, NextPageToken: "CBAQAA"}
 		vs, err := &youtube.ActivityListResponse{}, errors.New("")
 		i := 0
 		for {

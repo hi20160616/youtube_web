@@ -61,8 +61,8 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 	if ap.PublishAfter != "" {
 		call = call.PublishedAfter(ap.PublishAfter)
 	}
-	if ap.NextPageToken != "" {
-		call = call.PageToken(ap.NextPageToken)
+	if ap.PageToken != "" {
+		call = call.PageToken(ap.PageToken)
 	}
 
 	// do it
@@ -94,6 +94,11 @@ func (ap *ActivitiesParams) WithPublishAfter(minutes int) *ActivitiesParams {
 
 func (ap *ActivitiesParams) WithMaxResults(max int64) *ActivitiesParams {
 	ap.MaxResults = max
+	return ap
+}
+
+func (ap *ActivitiesParams) WithPageToken(next string) *ActivitiesParams {
+	ap.PageToken = next
 	return ap
 }
 

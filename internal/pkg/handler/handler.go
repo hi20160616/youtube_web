@@ -11,7 +11,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-var validPath = regexp.MustCompile("^/(cid|vid|index|channels)/(.*?)$")
+var validPath = regexp.MustCompile("^/(cid|cidNext|vid|index|channels)/(.*?)$")
 
 type Handler struct {
 	Channels   []*db.Channel
@@ -59,6 +59,7 @@ func GetHandler() *http.ServeMux {
 	mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.Dir("templates/default"))))
 	mux.HandleFunc("/channels/", makeHandler(channelsHandler))
 	mux.HandleFunc("/cid/", makeHandler(cidHandler))
+	mux.HandleFunc("/cidNext/", makeHandler(cidNextHandler))
 	mux.HandleFunc("/vid/", makeHandler(vidHandler))
 	return mux
 }
@@ -82,16 +83,12 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// 1. GetVideos by channelIds
 	cid := r.URL.Path[len("/cid/"):]
 	vr := data.NewVideosRepo().WithChannelId(cid).WithMaxResults(16)
-	// res, err := &youtube.VideoListResponse{}, errors.New("")
 	res, err := vr.List()
 	if err != nil {
 		log.Printf("handler: cidHandler: %v", err)
 	}
-	if vr.Activities.NextPageToken == "" {
-		p.Data = nil
-	} else {
-		p.Data = res
-	}
+	res.NextPageToken = vr.Activities.NextPageToken
+	p.Data = res
 	// 2. Get channels title
 	if p.Title == "" {
 		if len(res.Items) > 0 {
@@ -102,6 +99,31 @@ func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	}
 	// 3. render
 	render.Derive(w, "cid", p)
+}
+
+func getCidAndToken(r *http.Request) (string, string) {
+	return r.URL.Query().Get("cid"), r.URL.Query().Get("p")
+}
+
+func cidNextHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	cid, pToken := getCidAndToken(r)
+	vr := data.NewVideosRepo().WithChannelId(cid).WithPageToken(pToken).WithMaxResults(16)
+	res, err := vr.List()
+	if err != nil {
+		log.Printf("handler: cidNextHandler: %v", err)
+	}
+	res.NextPageToken = vr.Activities.NextPageToken
+	p.Data = res
+	// 2. Get channels title
+	if p.Title == "" {
+		if len(res.Items) > 0 {
+			p.Title = res.Items[0].Snippet.ChannelTitle
+		} else {
+			p.Title = "No Title"
+		}
+	}
+	// 3. render
+	render.Derive(w, "videos", p)
 }
 
 func vidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
