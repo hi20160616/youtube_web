@@ -35,7 +35,7 @@ func init() {
 func Derive(w http.ResponseWriter, tmpl string, p *Page) {
 	if err := templates.ExecuteTemplate(w, tmpl+".html", p); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("err template file: %s.html", tmpl)
+		log.Printf("err template: %s.html\n\terror: %#v", tmpl, err)
 	}
 }
 
