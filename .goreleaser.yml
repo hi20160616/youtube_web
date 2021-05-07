@@ -27,6 +27,7 @@ archives:
   - 
     files:
       - templates/*
+      - db/*
 
     replacements:
       darwin: Darwin
