@@ -1,4 +1,4 @@
-{{define "scrollspy_js"}}
+{{define "infinite_scroll_js"}}
 <script charset="utf-8">
 (function ($) {
     // Refer: https://blog.csdn.net/whu_zhangmin/article/details/42776207
@@ -45,16 +45,6 @@
     function getP(url) {
 	var pos = url.search("&p=");
 	return url.substr(pos+3);
-    }
-
-    function isCidPage() {
-    	var path = window.location.pathname;
-	var hasCid = path.search("/cid/")
-	if(hasCid == -1){
-		return false
-	} else {
-		return true
-	}
     }
 })(jQuery);
 </script>

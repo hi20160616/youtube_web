@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	// cidsPath     string = "cids.txt"      // for test
-	// channelsPath string = "channels.json" // for test
-	cidsPath     string = "./internal/pkg/db/json/cids.txt"      // for run
-	channelsPath string = "./internal/pkg/db/json/channels.json" // for run
+	// cidsPath     string = "../../../../db/cids.txt"      // for test
+	// channelsPath string = "../../../../db/channels.json" // for test
+	cidsPath     string = "./db/cids.txt"      // for run
+	channelsPath string = "./db/channels.json" // for run
 )
 
 type Channel struct {

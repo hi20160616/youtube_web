@@ -17,7 +17,7 @@ func (vp *VideosParams) List() (*youtube.VideoListResponse, error) {
 		vp.Part = "snippet, contentDetails"
 	}
 	if vp.Id == "" {
-		return nil, errors.New("db: json: id is nil")
+		return nil, errors.New("db: VideosParams List: id is nil")
 	}
 
 	call := YoutubeService.Videos.List(strings.Split(vp.Part, ","))
