@@ -27,7 +27,7 @@ type ActivitiesParams struct {
 var ErrAcitvityListNil error = errors.New("ActivityListResponse is nil")
 
 // var activitiesPath = "activities.json" // for test
-var activitiesPath = "./internal/pkg/db/json/activities.json"
+var activitiesPath = "./db/activities.json"
 
 func TimeParsed(minutes int) string {
 	return time.Now().Add(time.Duration(minutes) * time.Minute).Format(time.RFC3339)
@@ -40,7 +40,7 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 	}
 
 	if ap.ChannelId == "" {
-		return nil, errors.New("db: json: cid is nil")
+		return nil, errors.New("db: ActivitiesParams List: cid is nil")
 	}
 	if ap.MaxResults == 0 {
 		ap.MaxResults = 10
@@ -68,7 +68,7 @@ func (ap *ActivitiesParams) List() (*youtube.ActivityListResponse, error) {
 	// do it
 	res, err := call.Do()
 	if err != nil {
-		return nil, errors.WithMessage(err, "db: activities: List")
+		return nil, errors.WithMessage(err, "db: ActivitiesParams: List")
 	}
 	if len(res.Items) == 0 {
 		return nil, ErrAcitvityListNil
@@ -124,10 +124,13 @@ func getAllChannelActivities() ([]*youtube.VideoListResponse, error) {
 				vids = append(vids, vs.ContentDetails.Upload.VideoId)
 			}
 		}
+		if len(vids) == 0 {
+			continue
+		}
 		vp := &VideosParams{Id: strings.Join(vids, ",")}
 		vls, err := vp.List()
 		if err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "db activities err cid: "+c.ChannelId)
 		}
 		rt = append(rt, vls)
 
