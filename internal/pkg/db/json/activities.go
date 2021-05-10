@@ -28,7 +28,6 @@ type ActivitiesParams struct {
 
 var ErrAcitvityListNil error = errors.New("ActivityListResponse is nil")
 
-// var activitiesPath = "activities.json" // for test
 var activitiesPath = filepath.Join(config.Value.DBPath, "activities.json")
 
 func TimeParsed(minutes int) string {

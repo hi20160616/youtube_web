@@ -14,7 +14,6 @@ import (
 
 var (
 	tmplPath = filepath.Join(config.Value.TmplPath, "default")
-	// tmplPath = "../../../templates/default" // for test
 )
 
 type Page struct {

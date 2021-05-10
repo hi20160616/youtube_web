@@ -14,8 +14,6 @@ import (
 )
 
 var (
-	// cidsPath     = "../../../../db/cids.txt"      // for test
-	// channelsPath = "../../../../db/channels.json" // for test
 	cidsPath     = filepath.Join(config.Value.DBPath, "cids.txt")
 	channelsPath = filepath.Join(config.Value.DBPath, "channels.json")
 )
