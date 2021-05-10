@@ -19,21 +19,6 @@ type Handler struct {
 	Activities []*youtube.VideoListResponse
 }
 
-var H = &Handler{nil, nil}
-
-func init() {
-	h, err := data.ReadChannels()
-	if err != nil {
-		log.Println(err)
-	}
-	v, err := data.ReadActivities()
-	if err != nil {
-		log.Println(err)
-	}
-	H.Channels = h
-	H.Activities = v
-}
-
 func makeHandler(fn func(http.ResponseWriter, *http.Request, *render.Page)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
@@ -67,18 +52,22 @@ func GetHandler() *http.ServeMux {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	// 1. get channels' ids that the VideoCount changed.
-	// 2. get activities videos by channelIds
-	p := &render.Page{Title: "Home", Data: H.Activities}
+	// 1. get activities videos by channelIds
+	v, err := data.ReadActivities()
+	if err != nil {
+		log.Printf("homeHandler ReadActivities: %#v", err)
+	}
 
-	// 3. render these videos
-	render.Derive(w, "index", p)
+	// 2. render these videos
+	render.Derive(w, "index", &render.Page{Title: "Home", Data: v})
 }
 
 func channelsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	p.Title = "Channels"
-	p.Data = H.Channels
-	render.Derive(w, "channels", p)
+	h, err := data.ReadChannels()
+	if err != nil {
+		log.Printf("channelsHandler ReadChannels: %#v", err)
+	}
+	render.Derive(w, "channels", &render.Page{Title: "Channels", Data: h})
 }
 
 func cidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
