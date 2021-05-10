@@ -166,6 +166,36 @@ func readActivities() ([]*youtube.VideoListResponse, error) {
 	return as, nil
 }
 
+// Search search keywords from activities.json just updated by jobs
+func Search(kws ...string) (*youtube.VideoListResponse, error) {
+	return searchLocal(kws...)
+}
+
+// searchLocal search keywords from activities.json just updated by jobs
+func searchLocal(kws ...string) (*youtube.VideoListResponse, error) {
+	videoLstResps, err := readActivities()
+	if err != nil {
+		return nil, err
+	}
+
+	videoLstResp := &youtube.VideoListResponse{}
+	for _, v := range videoLstResps {
+		for _, vi := range v.Items {
+			s := vi.Snippet.Title + ","
+			s += vi.Snippet.Description + ","
+			s += vi.Snippet.ChannelTitle + ","
+			s += strings.Join(vi.Snippet.Tags, ",")
+			s = strings.ToLower(s)
+			for _, kw := range kws {
+				if strings.Contains(s, strings.ToLower(kw)) {
+					videoLstResp.Items = append(videoLstResp.Items, vi)
+				}
+			}
+		}
+	}
+	return videoLstResp, nil
+}
+
 func UpdateActivities() ([]*youtube.VideoListResponse, error) {
 	as, err := getAllChannelActivities()
 	if err != nil {

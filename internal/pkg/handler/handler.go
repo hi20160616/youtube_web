@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/hi20160616/youtube_web/internal/data"
 	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
@@ -11,7 +12,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-var validPath = regexp.MustCompile("^/(cid|cidNext|vid|index|channels)/(.*?)$")
+var validPath = regexp.MustCompile("^/(cid|cidNext|vid|index|channels|search)/(.*?)$")
 
 type Handler struct {
 	Channels   []*db.Channel
@@ -61,6 +62,7 @@ func GetHandler() *http.ServeMux {
 	mux.HandleFunc("/cid/", makeHandler(cidHandler))
 	mux.HandleFunc("/cidNext/", makeHandler(cidNextHandler))
 	mux.HandleFunc("/vid/", makeHandler(vidHandler))
+	mux.HandleFunc("/search/", makeHandler(searchHandler))
 	return mux
 }
 
@@ -141,4 +143,21 @@ func vidHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	}
 	// 2. render it
 	render.Derive(w, "vid", p)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	p.Title = "Search"
+	// get keywords
+	u := r.URL.Query().Get("s")
+	kws := strings.Split(u, " ")
+	// search
+	res, err := db.Search(kws...)
+	if err != nil {
+		log.Printf("handler: searchHandler: %#v", err)
+	}
+	if len(res.Items) > 0 {
+		p.Data = res
+	}
+	// render
+	render.Derive(w, "search", p)
 }
