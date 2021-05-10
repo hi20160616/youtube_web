@@ -1,0 +1,5 @@
+{
+	"Address": ":8080",
+	"DBPath": "db",
+	"TmplPath": "templates"
+}

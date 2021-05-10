@@ -2,16 +2,18 @@ package render
 
 import (
 	"fmt"
-	"github.com/rickb777/date/period"
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
 	"time"
+
+	"github.com/hi20160616/youtube_web/config"
+	"github.com/rickb777/date/period"
 )
 
-const (
-	tmplPath = "templates/default" // for run
+var (
+	tmplPath = filepath.Join(config.Value.TmplPath, "default")
 	// tmplPath = "../../../templates/default" // for test
 )
 

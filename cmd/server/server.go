@@ -8,12 +8,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/hi20160616/youtube_web/config"
 	"github.com/hi20160616/youtube_web/internal/pkg/service"
 	"golang.org/x/sync/errgroup"
 )
 
-const (
-	address string = ":8080"
+var (
+	address string = config.Value.Address
 )
 
 func main() {

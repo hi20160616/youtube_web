@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/hi20160616/youtube_web/config"
 	"github.com/pkg/errors"
 	"google.golang.org/api/youtube/v3"
 )
 
 var (
-	// cidsPath     string = "../../../../db/cids.txt"      // for test
-	// channelsPath string = "../../../../db/channels.json" // for test
-	cidsPath     string = "./db/cids.txt"      // for run
-	channelsPath string = "./db/channels.json" // for run
+	// cidsPath     = "../../../../db/cids.txt"      // for test
+	// channelsPath = "../../../../db/channels.json" // for test
+	cidsPath     = filepath.Join(config.Value.DBPath, "cids.txt")
+	channelsPath = filepath.Join(config.Value.DBPath, "channels.json")
 )
 
 type Channel struct {

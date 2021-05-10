@@ -29,7 +29,7 @@ func UpdateByHoursStart(ctx context.Context) error {
 	doit := func() error {
 		// if time.Now().Second() == 0 { // for test
 		//         time.Sleep(1 * time.Second) // for test
-		if time.Now().Minute() == 0 {
+		if now := time.Now(); now.Minute() == 0 && now.Second() == 0 {
 			log.Println("Update Channels ...")
 			if _, err := UpdateChannels(); err != nil {
 				return err
