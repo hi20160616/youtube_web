@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/hi20160616/youtube_web/config"
 	"github.com/pkg/errors"
@@ -112,9 +113,15 @@ func UpdateChannels() ([]*Channel, error) {
 }
 
 func storageChannels(cs []*Channel) error {
+	mu := sync.Mutex{}
+	mu.Lock()
 	csJson, err := json.Marshal(cs)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(channelsPath, csJson, 0644)
+	if err = ioutil.WriteFile(channelsPath, csJson, 0644); err != nil {
+		return err
+	}
+	mu.Unlock()
+	return nil
 }

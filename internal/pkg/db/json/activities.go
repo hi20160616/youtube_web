@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hi20160616/youtube_web/config"
@@ -140,11 +141,17 @@ func getAllChannelActivities() ([]*youtube.VideoListResponse, error) {
 }
 
 func storageActivities(as []*youtube.VideoListResponse) error {
+	mu := sync.Mutex{}
+	mu.Lock()
 	asJson, err := json.Marshal(as)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(activitiesPath, asJson, 0644)
+	if err = ioutil.WriteFile(activitiesPath, asJson, 0644); err != nil {
+		return err
+	}
+	mu.Unlock()
+	return nil
 }
 
 func ReadActivities() ([]*youtube.VideoListResponse, error) {

@@ -10,13 +10,20 @@ Use https://infinite-scroll.com/ for infinite scroll load videos.
 
 # Quick Start
 
-```
-go run cmd/server/server.go
-```
+1. get enit from https://github.com/hi20160616/enit  
+2. `enit set yt_api <youtube api key>`
+3. `./youtube_web`
 
-Look port on Mac:
+Look port:
+on Mac:  
 ```
 lsof -i:8080
+netstat plten | grep 8080
+```
+on Linux:
+```
+ps -A | grep 8080
+netstat pantu | grep 8080
 ```
 
 All your channelIds should list in `./internal/pkg/db/json/cids.txt`
@@ -26,6 +33,7 @@ All your channelIds should list in `./internal/pkg/db/json/cids.txt`
 - [X] Start jobs with heartbeat
 - [X] Infinite scroll loading complete on cid page.
 - [X] Optimize view of index
-- [ ] Search implement
+- [X] Search implement
+- [ ] Use context in deep control.
 - [ ] Scrollspy index
 

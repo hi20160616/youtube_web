@@ -11,7 +11,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-var Done = make(chan struct{}, 1)
+var (
+	done = make(chan struct{}, 1)
+	sema = make(chan struct{}, 1)
+)
 
 func UpdateChannels() ([]*db.Channel, error) {
 	// log.Println("UpdateChannels biz test") // for test
@@ -27,36 +30,36 @@ func UpdateActivities() ([]*youtube.VideoListResponse, error) {
 
 func UpdateByHoursStart(ctx context.Context) error {
 	doit := func() error {
-		// if time.Now().Second() == 0 { // for test
-		//         time.Sleep(1 * time.Second) // for test
-		if time.Now().Minute() == 0 {
-			log.Println("Update Channels ...")
-			if _, err := UpdateChannels(); err != nil {
-				return err
-			}
-			log.Println("Done.")
-			log.Println("Update Activities ...")
-			if _, err := UpdateActivities(); err != nil {
-				return err
-			}
-			log.Println("Done.")
-			time.Sleep(1 * time.Second)
+		log.Println("Update Channels ...")
+		if _, err := UpdateChannels(); err != nil {
+			return err
 		}
+		log.Println("Done.")
+		log.Println("Update Activities ...")
+		if _, err := UpdateActivities(); err != nil {
+			return err
+		}
+		log.Println("Done.")
 		return nil
 	}
+
 	for {
 		select {
-		case <-Done:
+		case <-done:
 			return errors.New("Exit Update on purpose!")
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			doit()
+			if time.Now().Minute() == 0 {
+				sema <- struct{}{}
+				doit()
+				<-sema
+			}
 		}
 	}
 }
 
 func UpdateByHoursStop() error {
-	close(Done)
+	close(done)
 	return nil
 }
