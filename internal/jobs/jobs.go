@@ -50,7 +50,7 @@ func UpdateByHoursStart(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			if time.Now().Minute() == 0 {
+			if time.Now().Minute() == 0 && time.Now().Second() == 0 {
 				sema <- struct{}{}
 				doit()
 				<-sema
