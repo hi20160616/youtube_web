@@ -27,6 +27,7 @@ func init() {
 	templates.Funcs(template.FuncMap{
 		"summary":       Summary,
 		"smartTime":     SmartTime,
+		"smartLongTime": SmartLongTime,
 		"smartDuration": SmartDuration,
 	})
 	pattern := filepath.Join(tmplPath, "*.html")
@@ -48,12 +49,22 @@ func Summary(des string) string {
 	return string(dRune[:300])
 }
 
-func SmartTime(t string) string {
+func parseWithZone(t string) time.Time {
 	tt, err := time.Parse(time.RFC3339, t)
 	if err != nil {
 		log.Printf("render: SmartTime: %v", err)
 	}
-	return tt.Format("15:04/01.02")
+	loc := time.FixedZone("UTC", 8*60*60)
+	return tt.In(loc)
+
+}
+
+func SmartTime(t string) string {
+	return parseWithZone(t).Format("15:04/01.02")
+}
+
+func SmartLongTime(t string) string {
+	return parseWithZone(t).String()
 }
 
 // https://play.golang.org/p/nMApT7G8SRV
