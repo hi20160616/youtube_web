@@ -18,6 +18,7 @@ func init() {
 	if err != nil {
 		log.Printf("config Getwd: %#v", err)
 	}
+	// root = "../../../" // for test handler
 	f, err := os.ReadFile(filepath.Join(root, "config/config.json"))
 	if err != nil {
 		log.Printf("config ReadFile: %#v", err)
