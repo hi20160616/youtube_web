@@ -49,7 +49,7 @@ func UpdateByHoursStart(ctx context.Context) error {
 			return errors.New("Exit Update on purpose!")
 		case <-ctx.Done():
 			return ctx.Err()
-		default:
+		case <-time.Tick(time.Second):
 			if time.Now().Minute() == 0 && time.Now().Second() == 0 {
 				sema <- struct{}{}
 				doit()
