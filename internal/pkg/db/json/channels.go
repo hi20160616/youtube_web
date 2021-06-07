@@ -9,14 +9,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/hi20160616/youtube_web/config"
+	"github.com/hi20160616/youtube_web/configs"
 	"github.com/pkg/errors"
 	"google.golang.org/api/youtube/v3"
 )
 
 var (
-	cidsPath     = filepath.Join(config.Value.DBPath, "cids.txt")
-	channelsPath = filepath.Join(config.Value.DBPath, "channels.json")
+	cidsPath     = filepath.Join(configs.Value.DBPath, "cids.txt")
+	channelsPath = filepath.Join(configs.Value.DBPath, "channels.json")
 )
 
 type Channel struct {

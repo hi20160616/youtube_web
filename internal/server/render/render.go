@@ -8,12 +8,12 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/hi20160616/youtube_web/config"
+	"github.com/hi20160616/youtube_web/configs"
 	"github.com/rickb777/date/period"
 )
 
 var (
-	tmplPath = filepath.Join(config.Value.TmplPath, "default")
+	tmplPath = filepath.Join(configs.Value.TmplPath, "default")
 )
 
 type Page struct {

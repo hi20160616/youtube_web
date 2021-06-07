@@ -8,7 +8,7 @@ import (
 
 	"github.com/hi20160616/youtube_web/internal/data"
 	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
-	"github.com/hi20160616/youtube_web/internal/pkg/render"
+	"github.com/hi20160616/youtube_web/internal/server/render"
 	"google.golang.org/api/youtube/v3"
 )
 

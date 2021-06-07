@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 )
 
 type configuration struct {
-	Address, RootPath, DBPath, TmplPath string
+	Title, Address, RootPath, DBPath, TmplPath string
 }
 
 var Value = &configuration{}
@@ -19,7 +19,7 @@ func init() {
 		log.Printf("config Getwd: %#v", err)
 	}
 	// root = "../../../" // for test handler
-	f, err := os.ReadFile(filepath.Join(root, "config/config.json"))
+	f, err := os.ReadFile(filepath.Join(root, "configs/configs.json"))
 	if err != nil {
 		log.Printf("config ReadFile: %#v", err)
 	}

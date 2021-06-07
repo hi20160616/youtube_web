@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hi20160616/youtube_web/config"
+	"github.com/hi20160616/youtube_web/configs"
 	"github.com/pkg/errors"
 	"google.golang.org/api/youtube/v3"
 )
@@ -29,7 +29,7 @@ type ActivitiesParams struct {
 
 var ErrAcitvityListNil error = errors.New("ActivityListResponse is nil")
 
-var activitiesPath = filepath.Join(config.Value.DBPath, "activities.json")
+var activitiesPath = filepath.Join(configs.Value.DBPath, "activities.json")
 
 func TimeParsed(minutes int) string {
 	return time.Now().Add(time.Duration(minutes) * time.Minute).Format(time.RFC3339)
