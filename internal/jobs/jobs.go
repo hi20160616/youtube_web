@@ -7,6 +7,7 @@ import (
 
 	"google.golang.org/api/youtube/v3"
 
+	"github.com/hi20160616/youtube_web/configs"
 	db "github.com/hi20160616/youtube_web/internal/pkg/db/json"
 	"github.com/pkg/errors"
 )
@@ -30,23 +31,32 @@ func UpdateActivities() ([]*youtube.VideoListResponse, error) {
 
 func UpdateByHoursStart(ctx context.Context) error {
 	doit := func() error {
-		log.Println("Update Channels ...")
+		log.Printf("[%s] Update Channels ...", configs.Value.Title)
 		if _, err := UpdateChannels(); err != nil {
-			return err
+			if errors.Is(err, context.Canceled) {
+				return err
+			}
+			log.Printf("[%s] UpdateByHoursStart: %v", configs.Value.Title, err)
 		}
-		log.Println("Done.")
-		log.Println("Update Activities ...")
+		log.Printf("[%s] Update Channels Done.", configs.Value.Title)
+		log.Printf("[%s] Update Activities ...", configs.Value.Title)
 		if _, err := UpdateActivities(); err != nil {
-			return err
+			if errors.Is(err, context.Canceled) {
+				return err
+			}
+			log.Printf("[%s] UpdateByHoursStart: %v", configs.Value.Title, err)
 		}
-		log.Println("Done.")
+		log.Printf("[%s] Update Activities Done.", configs.Value.Title)
 		return nil
 	}
+
+	// Run once while just start
+	doit()
 
 	for {
 		select {
 		case <-done:
-			return errors.New("Exit Update on purpose!")
+			return errors.Errorf("[%s] Exit Update on purpose!", configs.Value.Title)
 		case <-ctx.Done():
 			return ctx.Err()
 		case <-time.Tick(time.Second):
