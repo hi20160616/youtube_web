@@ -8,7 +8,7 @@ import (
 )
 
 type configuration struct {
-	Title, Address, RootPath, DBPath, TmplPath string
+	Title, Address, RootPath, DBPath, TmplPath, Cron string
 }
 
 var Value = &configuration{}

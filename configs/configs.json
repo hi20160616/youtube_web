@@ -2,5 +2,6 @@
 	"Title": "YoutubeFetcher",
 	"Address": ":8080",
 	"DBPath": "db",
-	"TmplPath": "templates"
+	"TmplPath": "templates",
+	"Cron": "@hourly"
 }

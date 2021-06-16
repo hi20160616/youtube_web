@@ -19,6 +19,7 @@ var (
 )
 
 func main() {
+	log.Default().SetPrefix(configs.Value.Title + ": ")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -30,26 +31,26 @@ func main() {
 		log.Println(err)
 	}
 	g.Go(func() error {
-		log.Printf("[%s] Server start on %s", configs.Value.Title, address)
+		log.Printf("Server start on %s", address)
 		return s.Start(ctx)
 	})
 	g.Go(func() error {
-		defer log.Printf("[%s] Server stop done.", configs.Value.Title)
+		defer log.Printf("Server stop done.")
 		<-ctx.Done() // wait for stop signal
-		log.Printf("[%s] Server stop now...", configs.Value.Title)
+		log.Printf("Server stop now...")
 		return s.Stop(ctx)
 	})
 
 	// Update service
 	jobs := &server.JobService{}
 	g.Go(func() error {
-		log.Printf("[%s] Jobs start ...", configs.Value.Title)
+		log.Printf("Jobs start ...")
 		return jobs.Start(ctx)
 	})
 	g.Go(func() error {
-		defer log.Printf("[%s] Jobs stop done.", configs.Value.Title)
+		defer log.Printf("Jobs stop done.")
 		<-ctx.Done() // wait for stop signal
-		log.Printf("[%s] Jobs stop now...", configs.Value.Title)
+		log.Printf("Jobs stop now...")
 		return jobs.Stop(ctx)
 	})
 
@@ -60,7 +61,7 @@ func main() {
 		select {
 		case sig := <-sigs:
 			fmt.Println()
-			log.Printf("[%s] signal caught: %s, ready to quit...", configs.Value.Title, sig.String())
+			log.Printf("signal caught: %s, ready to quit...", sig.String())
 			cancel()
 		case <-ctx.Done():
 			return ctx.Err()
@@ -70,7 +71,7 @@ func main() {
 
 	if err := g.Wait(); err != nil {
 		if !errors.Is(err, context.Canceled) {
-			log.Printf("[%s] not canceled by context: %s", configs.Value.Title, err)
+			log.Printf("not canceled by context: %s", err)
 		} else {
 			log.Println(err)
 		}
