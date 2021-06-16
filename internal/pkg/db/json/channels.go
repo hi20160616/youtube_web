@@ -54,10 +54,10 @@ func GetChannelFromApi(s *youtube.Service, cid string) (*Channel, error) {
 	// do it
 	res, err := call.Do()
 	if err != nil {
-		return nil, errors.WithMessage(err, "GetChannel: ")
+		return nil, errors.WithMessage(err, "db: GetChannelFromApi")
 	}
 	if len(res.Items) != 1 {
-		return nil, errors.New("GetChannel: fetched err on ChannelId: " + c.ChannelId)
+		return nil, errors.New("db: GetChannelFromApi: fetched err on ChannelId: " + c.ChannelId)
 	}
 	c.ChannelTitle = res.Items[0].Snippet.Title
 	c.VideoCount = res.Items[0].Statistics.VideoCount
@@ -68,13 +68,13 @@ func GetChannelFromApi(s *youtube.Service, cid string) (*Channel, error) {
 func GetChannels(s *youtube.Service) ([]*Channel, error) {
 	cids, err := getCids()
 	if err != nil {
-		return nil, errors.WithMessage(err, "GetChannels: ")
+		return nil, errors.WithMessage(err, "db: GetChannels")
 	}
 	cs := []*Channel{}
 	for _, cid := range cids {
 		c, err := GetChannelFromApi(s, cid)
 		if err != nil {
-			return nil, errors.WithMessage(err, "GetChannels: ")
+			return nil, errors.WithMessage(err, "db: GetChannels")
 		}
 		cs = append(cs, c)
 	}
